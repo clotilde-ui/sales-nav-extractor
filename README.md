@@ -66,11 +66,27 @@ python main.py --url "..." --detailed -o leads.csv
 | `annee_fin_experience` | Page profil (`--detailed`) |
 | `domaine_entreprise` | Page profil (`--detailed`) |
 
+## Interface web (Streamlit)
+
+Une interface web est aussi disponible pour lancer les exports sans passer par le terminal :
+
+```bash
+streamlit run app.py
+```
+
+L'interface permet de :
+- Se connecter a LinkedIn (bouton dans la sidebar)
+- Coller l'URL de recherche Sales Navigator
+- Configurer le nombre de pages et le mode detaille
+- Visualiser les resultats dans un tableau
+- Telecharger le CSV directement depuis le navigateur
+
 ## Structure du projet
 
 ```
 config.py       # Configuration (délais, champs CSV, chemins)
 main.py         # Point d'entrée CLI
+app.py          # Interface web Streamlit
 scraper.py      # Logique de scraping Playwright
 parser.py       # Extraction des champs depuis le DOM
 exporter.py     # Export CSV

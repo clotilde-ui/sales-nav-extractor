@@ -47,6 +47,7 @@ def scrape_leads(
     search_url: str,
     max_pages: int | None = None,
     detailed: bool = False,
+    on_progress: callable = None,
 ) -> list[dict]:
     """Scrape les leads depuis une recherche Sales Navigator."""
     leads = []
@@ -100,6 +101,9 @@ def scrape_leads(
                 leads.append(lead)
 
             print(f"    {page_leads} leads extraits")
+
+            if on_progress:
+                on_progress(page_num, max_pages)
 
             # Pagination — chercher le bouton "Next"
             next_btn = page.query_selector(
