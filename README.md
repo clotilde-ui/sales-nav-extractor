@@ -81,6 +81,25 @@ L'interface permet de :
 - Visualiser les resultats dans un tableau
 - Telecharger le CSV directement depuis le navigateur
 
+## Extension Chrome
+
+Alternative au scraping Playwright : une extension Chrome qui exporte les leads directement depuis le navigateur, sans ouvrir de session séparée.
+
+### Installation
+
+1. Ouvrir Chrome et aller sur `chrome://extensions/`
+2. Activer le **Mode développeur** (toggle en haut à droite)
+3. Cliquer **Charger l'extension non empaquetée**
+4. Sélectionner le dossier `extension/`
+
+### Utilisation
+
+1. Naviguer sur une page de résultats de recherche Sales Navigator
+2. Cliquer sur l'icône **SN Export** dans la barre d'extensions
+3. Configurer le nombre de pages max (optionnel)
+4. Cliquer **Exporter les leads**
+5. Une fois l'extraction terminée, cliquer **Télécharger CSV**
+
 ## Structure du projet
 
 ```
@@ -90,4 +109,12 @@ app.py          # Interface web Streamlit
 scraper.py      # Logique de scraping Playwright
 parser.py       # Extraction des champs depuis le DOM
 exporter.py     # Export CSV
+extension/      # Extension Chrome (Manifest V3)
+  manifest.json # Configuration de l'extension
+  popup.html    # Interface utilisateur (popup)
+  popup.js      # Logique UI et export CSV
+  content.js    # Content script (scraping, pagination)
+  parser.js     # Extraction DOM (port de parser.py)
+  styles.css    # Styles du popup
+  icons/        # Icônes 16/48/128px
 ```

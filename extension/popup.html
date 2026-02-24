@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="fr">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <div class="container">
+      <h1>SN Export</h1>
+
+      <div id="not-sales-nav" class="message hidden">
+        <p>Naviguez vers une page de recherche<br />LinkedIn Sales Navigator.</p>
+      </div>
+
+      <div id="controls">
+        <div class="field">
+          <label for="max-pages">Pages max</label>
+          <input
+            type="number"
+            id="max-pages"
+            min="1"
+            placeholder="toutes"
+          />
+        </div>
+
+        <div class="field checkbox">
+          <label>
+            <input type="checkbox" id="detailed" />
+            Mode détaillé
+          </label>
+        </div>
+
+        <button id="btn-export" class="primary">Exporter les leads</button>
+      </div>
+
+      <div id="progress" class="hidden">
+        <div class="progress-bar">
+          <div class="progress-fill" id="progress-fill"></div>
+        </div>
+        <p id="progress-text">Extraction en cours...</p>
+      </div>
+
+      <div id="results" class="hidden">
+        <p id="results-count"></p>
+        <button id="btn-download" class="primary">Télécharger CSV</button>
+      </div>
+    </div>
+
+    <script src="popup.js"></script>
+  </body>
+</html>
