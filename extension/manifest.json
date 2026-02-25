@@ -1,7 +1,7 @@
 {
   "manifest_version": 3,
   "name": "Sales Navigator Export",
-  "version": "1.4.1",
+  "version": "1.4.2",
   "description": "Exporte les leads depuis LinkedIn Sales Navigator en CSV",
   "permissions": ["activeTab", "scripting", "downloads", "storage"],
   "host_permissions": ["https://www.linkedin.com/sales/*"],
