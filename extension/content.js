@@ -13,13 +13,35 @@ function sleep(ms) {
 }
 
 async function scrollToLoadCards() {
-  const cards = document.querySelectorAll(
-    "li.artdeco-list__item, ol.search-results__result-list > li"
-  );
-  for (const card of cards) {
-    card.scrollIntoView({ behavior: "smooth", block: "center" });
-    await sleep(200 + Math.random() * 200);
+  // Scroll progressif vers le bas pour déclencher le lazy-loading
+  // Répète jusqu'à ce que le nombre de cartes se stabilise
+  let previousCount = 0;
+  let stableRounds = 0;
+
+  while (stableRounds < 3) {
+    const cards = document.querySelectorAll(
+      "li.artdeco-list__item, ol.search-results__result-list > li"
+    );
+    const currentCount = cards.length;
+
+    if (currentCount === previousCount) {
+      stableRounds++;
+    } else {
+      stableRounds = 0;
+      previousCount = currentCount;
+    }
+
+    // Scroll chaque carte visible dans le viewport
+    for (const card of cards) {
+      card.scrollIntoView({ behavior: "smooth", block: "center" });
+      await sleep(150 + Math.random() * 150);
+    }
+
+    // Scroll aussi vers le bas de la page pour forcer le chargement
+    window.scrollTo(0, document.body.scrollHeight);
+    await sleep(800);
   }
+
   window.scrollTo(0, 0);
   await sleep(500);
 }
@@ -72,6 +94,28 @@ function waitForCards(timeout = 30000) {
   });
 }
 
+function waitForNewPage(previousCount, timeout = 30000) {
+  // Attend que le DOM change après un clic sur "Suivant"
+  // Détecte soit un nombre de cartes différent, soit un changement d'URL
+  const startUrl = window.location.href;
+  return new Promise((resolve, reject) => {
+    const start = Date.now();
+    const check = () => {
+      const urlChanged = window.location.href !== startUrl;
+      const cards = getLeadCards();
+      if (urlChanged || cards.length !== previousCount) {
+        // Petite pause pour laisser le rendu se stabiliser
+        setTimeout(() => resolve(cards.length), 1000);
+      } else if (Date.now() - start > timeout) {
+        reject(new Error("Timeout: la page n'a pas changé"));
+      } else {
+        setTimeout(check, 500);
+      }
+    };
+    check();
+  });
+}
+
 chrome.runtime.onMessage.addListener((message, _sender, sendResponse) => {
   if (message.action === "scrape_current_page") {
     (async () => {
@@ -110,15 +154,16 @@ chrome.runtime.onMessage.addListener((message, _sender, sendResponse) => {
 
           if (pageNum >= maxPages) break;
 
+          const countBefore = getLeadCards().length;
           const hasNext = clickNextPage();
           if (!hasNext) break;
 
           await randomDelay();
           pageNum++;
 
-          // Wait for new page to load
+          // Attendre que la page change (nouvelles cartes chargées)
           try {
-            await waitForCards();
+            await waitForNewPage(countBefore);
           } catch (_) {
             break;
           }
