@@ -147,8 +147,17 @@ chrome.runtime.onMessage.addListener((message, _sender, sendResponse) => {
           }
         }
 
+        // Sauvegarder dans storage pour que le popup puisse récupérer les résultats
+        chrome.storage.local.set({
+          lastExport: { leads: allLeads, pages: pageNum, date: Date.now() },
+        });
         sendResponse({ success: true, leads: allLeads, pages: pageNum });
       } catch (err) {
+        if (allLeads.length > 0) {
+          chrome.storage.local.set({
+            lastExport: { leads: allLeads, pages: pageNum, date: Date.now() },
+          });
+        }
         sendResponse({
           success: false,
           error: err.message,

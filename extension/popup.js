@@ -111,6 +111,19 @@ document.addEventListener("DOMContentLoaded", async () => {
     return;
   }
 
+  // Vérifier s'il y a un export récent sauvegardé (moins de 30 min)
+  try {
+    const stored = await chrome.storage.local.get("lastExport");
+    if (stored.lastExport && stored.lastExport.leads.length > 0) {
+      const ageMin = (Date.now() - stored.lastExport.date) / 60000;
+      if (ageMin < 30) {
+        exportedLeads = stored.lastExport.leads;
+        $("results-count").textContent = `${exportedLeads.length} leads exportés`;
+        show("results");
+      }
+    }
+  } catch (_) {}
+
   $("btn-export").addEventListener("click", async () => {
     const maxPagesInput = $("max-pages").value;
     const maxPages = maxPagesInput ? parseInt(maxPagesInput, 10) : null;
@@ -118,6 +131,7 @@ document.addEventListener("DOMContentLoaded", async () => {
     hide("controls");
     hide("results");
     show("progress");
+    chrome.storage.local.remove("lastExport");
     $("progress-fill").style.width = "0%";
     $("progress-fill").classList.remove("indeterminate");
 
