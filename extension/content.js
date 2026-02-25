@@ -82,8 +82,8 @@ function waitForNewPage(previousCount, timeout = 30000) {
       const urlChanged = window.location.href !== startUrl;
       const cards = getLeadCards();
       if (urlChanged || cards.length !== previousCount) {
-        // Petite pause pour laisser le rendu se stabiliser
-        setTimeout(() => resolve(cards.length), 1000);
+        // Pause pour laisser toutes les cartes se charger
+        setTimeout(() => resolve(cards.length), 3000);
       } else if (Date.now() - start > timeout) {
         reject(new Error("Timeout: la page n'a pas changé"));
       } else {
