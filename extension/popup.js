@@ -124,9 +124,15 @@ document.addEventListener("DOMContentLoaded", async () => {
     }
   } catch (_) {}
 
+  // Toggle champ nombre de pages
+  $("all-pages").addEventListener("change", () => {
+    $("max-pages-field").style.display = $("all-pages").checked ? "none" : "";
+  });
+
   $("btn-export").addEventListener("click", async () => {
+    const allPages = $("all-pages").checked;
     const maxPagesInput = $("max-pages").value;
-    const maxPages = maxPagesInput ? parseInt(maxPagesInput, 10) : null;
+    const maxPages = allPages ? 999 : (maxPagesInput ? parseInt(maxPagesInput, 10) : 999);
 
     hide("controls");
     hide("results");

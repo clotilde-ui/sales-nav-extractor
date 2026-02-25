@@ -13,13 +13,20 @@
       </div>
 
       <div id="controls">
-        <div class="field">
-          <label for="max-pages">Pages max</label>
+        <div class="field checkbox">
+          <label>
+            <input type="checkbox" id="all-pages" checked />
+            Toutes les pages
+          </label>
+        </div>
+
+        <div class="field" id="max-pages-field" style="display:none">
+          <label for="max-pages">Nombre de pages</label>
           <input
             type="number"
             id="max-pages"
             min="1"
-            placeholder="toutes"
+            placeholder="ex: 3"
           />
         </div>
 
