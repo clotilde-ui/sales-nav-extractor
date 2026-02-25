@@ -13,35 +13,13 @@ function sleep(ms) {
 }
 
 async function scrollToLoadCards() {
-  // Scroll progressif vers le bas pour déclencher le lazy-loading
-  // Répète jusqu'à ce que le nombre de cartes se stabilise
-  let previousCount = 0;
-  let stableRounds = 0;
-
-  while (stableRounds < 3) {
-    const cards = document.querySelectorAll(
-      "li.artdeco-list__item, ol.search-results__result-list > li"
-    );
-    const currentCount = cards.length;
-
-    if (currentCount === previousCount) {
-      stableRounds++;
-    } else {
-      stableRounds = 0;
-      previousCount = currentCount;
-    }
-
-    // Scroll chaque carte visible dans le viewport
-    for (const card of cards) {
-      card.scrollIntoView({ behavior: "smooth", block: "center" });
-      await sleep(150 + Math.random() * 150);
-    }
-
-    // Scroll aussi vers le bas de la page pour forcer le chargement
-    window.scrollTo(0, document.body.scrollHeight);
-    await sleep(800);
+  const cards = document.querySelectorAll(
+    "li.artdeco-list__item, ol.search-results__result-list > li"
+  );
+  for (const card of cards) {
+    card.scrollIntoView({ behavior: "smooth", block: "center" });
+    await sleep(200 + Math.random() * 200);
   }
-
   window.scrollTo(0, 0);
   await sleep(500);
 }
