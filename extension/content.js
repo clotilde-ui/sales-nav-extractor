@@ -72,9 +72,34 @@ function waitForCards(timeout = 30000) {
   });
 }
 
+function waitForStableCards(timeout = 30000) {
+  // Attend que le nombre de cartes se stabilise (pas de changement pendant 2s)
+  return new Promise((resolve, reject) => {
+    const start = Date.now();
+    let lastCount = getLeadCards().length;
+    let stableSince = Date.now();
+
+    const check = () => {
+      const count = getLeadCards().length;
+      if (count !== lastCount) {
+        lastCount = count;
+        stableSince = Date.now();
+      }
+
+      if (count > 0 && Date.now() - stableSince >= 2000) {
+        resolve(count);
+      } else if (Date.now() - start > timeout) {
+        resolve(lastCount); // on prend ce qu'on a
+      } else {
+        setTimeout(check, 300);
+      }
+    };
+    check();
+  });
+}
+
 function waitForNewPage(previousCount, timeout = 30000) {
-  // Attend que le DOM change après un clic sur "Suivant"
-  // Détecte soit un nombre de cartes différent, soit un changement d'URL
+  // Attend que l'URL change après un clic sur "Suivant", puis que les cartes se stabilisent
   const startUrl = window.location.href;
   return new Promise((resolve, reject) => {
     const start = Date.now();
@@ -82,8 +107,8 @@ function waitForNewPage(previousCount, timeout = 30000) {
       const urlChanged = window.location.href !== startUrl;
       const cards = getLeadCards();
       if (urlChanged || cards.length !== previousCount) {
-        // Pause pour laisser toutes les cartes se charger
-        setTimeout(() => resolve(cards.length), 3000);
+        // Page a changé, maintenant attendre que les cartes se stabilisent
+        waitForStableCards(timeout).then(resolve);
       } else if (Date.now() - start > timeout) {
         reject(new Error("Timeout: la page n'a pas changé"));
       } else {
@@ -118,6 +143,7 @@ chrome.runtime.onMessage.addListener((message, _sender, sendResponse) => {
         while (pageNum <= maxPages) {
           await waitForCards();
           await scrollToLoadCards();
+          await waitForStableCards();
           const leads = scrapeCurrentPage();
           allLeads.push(...leads);
 
