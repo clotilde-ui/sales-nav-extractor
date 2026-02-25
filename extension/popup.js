@@ -123,7 +123,7 @@ document.addEventListener("DOMContentLoaded", async () => {
 
     try {
       const response = await chrome.tabs.sendMessage(tab.id, {
-        action: maxPages ? "scrape_all_pages" : "scrape_current_page",
+        action: "scrape_all_pages",
         maxPages,
       });
 
