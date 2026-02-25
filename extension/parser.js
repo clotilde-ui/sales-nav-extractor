@@ -39,6 +39,16 @@ function toAbsolute(href) {
   return "https://www.linkedin.com" + href;
 }
 
+function salesNavToLinkedinUrl(url) {
+  // Convertit une URL Sales Navigator en URL profil LinkedIn classique
+  // Ex: /sales/lead/ACwAACpkZ6QB...,NAME_SEARCH,kNOb?_ntb=... → https://www.linkedin.com/in/ACwAACpkZ6QB...
+  const match = url.match(/\/sales\/lead\/([A-Za-z0-9_-]+)/);
+  if (match) {
+    return "https://www.linkedin.com/in/" + match[1];
+  }
+  return url.split("?")[0];
+}
+
 function extractYearsFromElements(elements) {
   const years = [];
   for (const el of elements) {
@@ -74,7 +84,7 @@ function parseLeadCard(card) {
     );
     if (profileLink) {
       const href = profileLink.getAttribute("href");
-      if (href) lead.url_profil = toAbsolute(href);
+      if (href) lead.url_profil = salesNavToLinkedinUrl(toAbsolute(href));
     }
   } catch (_) {}
 

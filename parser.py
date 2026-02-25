@@ -61,7 +61,7 @@ def parse_lead_card(card) -> dict:
         if profile_link:
             href = profile_link.get_attribute("href")
             if href:
-                lead["url_profil"] = _to_absolute(href)
+                lead["url_profil"] = _sales_nav_to_linkedin_url(_to_absolute(href))
     except Exception:
         pass
 
@@ -218,3 +218,15 @@ def _to_absolute(href: str) -> str:
     if href.startswith("http"):
         return href
     return f"https://www.linkedin.com{href}"
+
+
+def _sales_nav_to_linkedin_url(url: str) -> str:
+    """Convertit une URL Sales Navigator en URL profil LinkedIn classique.
+
+    Ex: /sales/lead/ACwAACpkZ6QB...,NAME_SEARCH,kNOb?_ntb=...
+      → https://www.linkedin.com/in/ACwAACpkZ6QB...
+    """
+    match = re.search(r"/sales/lead/([A-Za-z0-9_-]+)", url)
+    if match:
+        return f"https://www.linkedin.com/in/{match.group(1)}"
+    return url.split("?")[0]
